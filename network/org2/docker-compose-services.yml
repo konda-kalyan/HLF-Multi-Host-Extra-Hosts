@@ -14,15 +14,15 @@ services:
                 aliases:
                     - ca_org2
         extra_hosts:
-            - "peer0.org2.example.com:172.31.58.209"
-			- "peer1.org2.example.com:172.31.58.209"
+            - "peer0.org2.example.com:172.31.39.243"
+			- "peer1.org2.example.com:172.31.39.243"
         image: hyperledger/fabric-ca:amd64-1.4.4
         hostname: ca.org2.example.com
         environment:
             - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
             - FABRIC_CA_SERVER_CA_NAME=ca_org2
             - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-            - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/3ba26e45eb30dbbd6c8c0fa0d6936cee549a9fbadc347bf1388fea17b63d8cb7_sk
+            - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/6fb7c73c3233bb77320782f3fbd296fce1eb81ecec44d641b8a6236cc8e18777_sk
         ports:
             - "8054:7054"   
         command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
@@ -31,7 +31,7 @@ services:
 
     couchdb0_org2:
         extra_hosts:
-            - "peer0.org2.example.com:172.31.58.209"
+            - "peer0.org2.example.com:172.31.39.243"
         image: hyperledger/fabric-couchdb:amd64-0.4.18
         hostname: couchdb0_org2
         ports:
@@ -41,7 +41,7 @@ services:
 
     couchdb1_org2:
         extra_hosts:
-            - "peer1.org2.example.com:172.31.58.209"
+            - "peer1.org2.example.com:172.31.39.243"
         image: hyperledger/fabric-couchdb:amd64-0.4.18
         hostname: couchdb1_org2
         ports:

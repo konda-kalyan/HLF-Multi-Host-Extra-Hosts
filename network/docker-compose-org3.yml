@@ -1,0 +1,244 @@
+
+version: '3.2'
+
+networks:
+    hlf_multi_host_network:
+
+services:
+
+    orderer3.example.com:
+        container_name: orderer3.example.com
+        extra_hosts:
+            - "peer0.org1.example.com:172.31.8.85"
+            - "peer1.org1.example.com:172.31.8.85"
+            - "peer0.org2.example.com:172.31.39.243"
+            - "peer1.org2.example.com:172.31.39.243"
+            - "peer0.org3.example.com:172.31.32.21"
+            - "peer1.org3.example.com:172.31.32.21"
+            - "orderer1.example.com:172.31.8.85"
+            - "orderer2.example.com:172.31.39.243"
+        image: hyperledger/fabric-orderer:amd64-1.4.4
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
+        command: orderer
+        hostname: orderer3.example.com
+        environment:
+          - ORDERER_HOST=orderer3.example.com
+          - FABRIC_LOGGING_SPEC=INFO
+          - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+          - ORDERER_GENERAL_LISTENPORT=7050
+          - ORDERER_GENERAL_GENESISMETHOD=file
+          - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/channel-artifacts/genesis.block
+          - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+          - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/msp
+          # enabled TLS
+          - ORDERER_GENERAL_TLS_ENABLED=true
+          - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/tls/server.key
+          - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/tls/server.crt
+          - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/tls/ca.crt]
+          - ORDERER_KAFKA_TOPIC_REPLICATIONFACTOR=1
+          - ORDERER_KAFKA_VERBOSE=true
+          - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/tls/server.crt
+          - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/tls/server.key
+          - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/tls/ca.crt]
+          - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8445  # operation RESTful API
+          - ORDERER_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
+          - ORDERER_OPERATIONS_TLS_ENABLED=false
+          - ORDERER_OPERATIONS_TLS_PRIVATEKEY=/var/hyperledger/tls/server.key
+          - ORDERER_OPERATIONS_TLS_CERTIFICATE=/var/hyperledger/tls/server.crt
+          - ORDERER_OPERATIONS_TLS_CLIENTROOTCAS=[/var/hyperledger/tls/ca.crt]
+          - ORDERER_OPERATIONS_TLS_CLIENTAUTHREQUIRED=false
+        ports:
+          - 9050:7050
+          - 8445:8445
+
+        volumes:
+            - /var/mynetwork/certs/crypto-config/ordererOrganizations/example.com/users:/var/hyperledger/users
+            - /var/mynetwork/certs/crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/msp:/var/hyperledger/msp
+            - /var/mynetwork/certs/crypto-config/ordererOrganizations/example.com/orderers/orderer3.example.com/tls:/var/hyperledger/tls
+            - /var/mynetwork/certs/channel-artifacts/:/var/hyperledger/channel-artifacts
+        networks:
+          hlf_multi_host_network:
+            aliases:
+                - orderer3.example.com
+
+    ca.org3.example.com:
+        container_name: ca.org3.example.com
+        extra_hosts:
+            - "peer0.org3.example.com:172.31.32.21"
+            - "peer1.org3.example.com:172.31.32.21"
+        image: hyperledger/fabric-ca:amd64-1.4.4
+        hostname: ca.org3.example.com
+        environment:
+            - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+            - FABRIC_CA_SERVER_CA_NAME=ca.org3.example.com
+            - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org3.example.com-cert.pem
+            - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/5c911e774f4ebd793807e539cc2bb910d717b91989c60556e9612873b44f99bc_sk
+        command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+        volumes:
+            - /var/mynetwork/certs/crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+        ports:
+            - "9054:7054"  
+        networks:
+            hlf_multi_host_network:
+                aliases:
+                    - ca.org3.example.com
+                 
+    couchdb.peer0.org3.example.com:
+        container_name: couchdb.peer0.org3.example.com
+        extra_hosts:
+            - "peer0.org3.example.com:172.31.32.21"
+        image: hyperledger/fabric-couchdb:amd64-0.4.18
+        hostname: couchdb.peer0.org3.example.com
+        ports:
+           - 9984:5984
+        networks:
+           - hlf_multi_host_network    
+
+    couchdb.peer1.org3.example.com:
+        container_name: couchdb.peer1.org3.example.com
+        extra_hosts:
+            - "peer1.org3.example.com:172.31.32.21"
+        image: hyperledger/fabric-couchdb:amd64-0.4.18
+        hostname: couchdb.peer1.org3.example.com
+        ports:
+           - 10984:5984
+        networks:
+           - hlf_multi_host_network
+
+    peer0.org3.example.com:
+        container_name: peer0.org3.example.com
+        extra_hosts:
+            - "peer0.org1.example.com:172.31.8.85"
+            - "peer1.org1.example.com:172.31.8.85"
+            - "peer0.org2.example.com:172.31.39.243"
+            - "peer1.org2.example.com:172.31.39.243"
+            - "peer1.org3.example.com:172.31.32.21"
+            - "orderer1.example.com:172.31.8.85"
+            - "orderer2.example.com:172.31.39.243"
+            - "orderer3.example.com:172.31.32.21"
+        image: hyperledger/fabric-peer:amd64-1.4.4
+        hostname: peer0.org3.example.com
+        environment:
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            - CORE_PEER_NETWORKID=hlf_multi_host_network
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=hlf_multi_host_network
+            - CORE_PEER_ADDRESSAUTODETECT=true
+            # - CORE_PEER_GOSSIP_ORGLEADER=false
+            # - CORE_PEER_GOSSIP_USELEADERELECTION=true
+            - CORE_PEER_PROFILE_ENABLED=true
+            - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/msp
+            #- CORE_LEDGER_STATE_STATEDATABASE=LevelDB
+            - FABRIC_LOGGING_SPEC=INFO
+            - CORE_LOGGING_GOSSIP=${CORE_LOGGING_GOSSIP}
+            - CORE_LOGGING_MSP=INFO
+            # - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/msp
+            # TLS settings
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
+            - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/tls/ca.crt
+            - CORE_PEER_CHAINCODELISTENADDRESS=peer0.org3.example.com:7052
+            - CORE_PEER_ID=peer0.org3.example.com
+            - CORE_PEER_ADDRESS=peer0.org3.example.com:7051
+            - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org3.example.com:7051
+            - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org3.example.com:7051
+            - CORE_PEER_LOCALMSPID=Org3MSP
+            - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.org3.example.com:5984
+            - CORE_CHAINCODE_LOGGING_LEVEL=INFO
+            - CORE_CHAINCODE_LOGGING_SHIM=INFO
+            - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9447  # operation RESTful API
+            - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
+            - CORE_OPERATIONS_TLS_ENABLED=false
+            - CORE_OPERATIONS_TLS_PRIVATEKEY=/var/hyperledger/tls/server.key
+            - CORE_OPERATIONS_TLS_CERTIFICATE=/var/hyperledger/tls/server.crt
+            - CORE_OPERATIONS_TLS_CLIENTROOTCAS=[/var/hyperledger/tls/ca.crt]
+            - CORE_OPERATIONS_TLS_CLIENTAUTHREQUIRED=false
+            - CORE_PEER_EVENTS_ADDRESS=0.0.0.0:7053
+        volumes:
+            - /var/run/:/host/var/run/
+            - /var/mynetwork/certs/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/msp:/var/hyperledger/msp
+            - /var/mynetwork/certs/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls:/var/hyperledger/tls
+            - /var/mynetwork/certs/crypto-config/peerOrganizations/org3.example.com/users:/var/hyperledger/users
+            - /var/mynetwork/certs/channel-artifacts/:/var/hyperledger/channel-artifacts
+        command: peer node start
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        depends_on:
+            - couchdb.peer0.org3.example.com
+        ports:
+            - 11051:7051
+            - 11053:7053
+            - 9447:9447
+        networks:
+          hlf_multi_host_network:
+            aliases:
+                - peer0.org3.example.com
+
+    peer1.org3.example.com:
+        container_name: peer1.org3.example.com
+        extra_hosts:
+            - "peer0.org1.example.com:172.31.8.85"
+            - "peer1.org1.example.com:172.31.8.85"
+            - "peer0.org2.example.com:172.31.39.243"
+            - "peer1.org2.example.com:172.31.39.243"
+            - "peer0.org3.example.com:172.31.32.21"
+            - "orderer1.example.com:172.31.8.85"
+            - "orderer2.example.com:172.31.39.243"
+            - "orderer3.example.com:172.31.32.21"
+        image: hyperledger/fabric-peer:amd64-1.4.4
+        hostname: peer1.org3.example.com
+        environment:
+            - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+            - CORE_PEER_NETWORKID=hlf_multi_host_network
+            - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=hlf_multi_host_network
+            - CORE_PEER_ADDRESSAUTODETECT=true
+            # - CORE_PEER_GOSSIP_ORGLEADER=false
+            # - CORE_PEER_GOSSIP_USELEADERELECTION=true
+            - CORE_PEER_PROFILE_ENABLED=true
+            - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/msp
+            #- CORE_LEDGER_STATE_STATEDATABASE=LevelDB
+            - FABRIC_LOGGING_SPEC=INFO
+            - CORE_LOGGING_GOSSIP=${CORE_LOGGING_GOSSIP}
+            - CORE_LOGGING_MSP=INFO
+            # - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/msp
+            # TLS settings
+            - CORE_PEER_TLS_ENABLED=true
+            - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
+            - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/tls/server.crt
+            - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/tls/server.key
+            - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/tls/ca.crt
+            - CORE_PEER_CHAINCODELISTENADDRESS=peer1.org3.example.com:7052
+            - CORE_PEER_ID=peer1.org3.example.com
+            - CORE_PEER_ADDRESS=peer1.org3.example.com:7051
+            - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org3.example.com:7051
+            - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org3.example.com:7051
+            - CORE_PEER_LOCALMSPID=Org3MSP
+            - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.org3.example.com:5984
+            - CORE_CHAINCODE_LOGGING_LEVEL=INFO
+            - CORE_CHAINCODE_LOGGING_SHIM=INFO
+            - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:9448  # operation RESTful API
+            - CORE_METRICS_PROVIDER=prometheus  # prometheus will pull metrics from orderer via /metrics RESTful API
+            - CORE_OPERATIONS_TLS_ENABLED=false
+            - CORE_PEER_EVENTS_ADDRESS=0.0.0.0:7053
+        volumes:
+            - /var/run/:/host/var/run/
+            # - $GOPATH/src/github.com/hyperledger/fabric/:/opt/gopath/src/github.com/hyperledger/fabric/
+            # - ../crypto-config/:/var/hyperledger/config
+            - /var/mynetwork/certs/crypto-config/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/msp:/var/hyperledger/msp
+            - /var/mynetwork/certs/crypto-config/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/tls:/var/hyperledger/tls
+            - /var/mynetwork/certs/crypto-config/peerOrganizations/org3.example.com/users:/var/hyperledger/users
+            - /var/mynetwork/certs/channel-artifacts/:/var/hyperledger/channel-artifacts
+        command: peer node start
+        working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        depends_on:
+            - couchdb.peer1.org3.example.com
+        ports:
+          - 12051:7051
+          - 12053:7053
+          - 9448:9448
+        networks:
+          hlf_multi_host_network:
+            aliases:
+                - peer1.org3.example.com

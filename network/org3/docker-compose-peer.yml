@@ -10,14 +10,14 @@ services:
 
     peer0_org3:
 	 extra_hosts:
-		- "peer0.org1.example.com:172.31.58.209"
-		- "peer1.org1.example.com:172.31.58.209"
-		- "peer0.org2.example.com:172.31.58.209"
-		- "peer1.org2.example.com:172.31.58.209"
-		- "peer1.org3.example.com:172.31.58.209"
-		- "orderer1.example.com:172.31.58.209"
-		- "orderer2.example.com:172.31.58.209"
-		- "orderer3.example.com:172.31.58.209"
+		- "peer0.org1.example.com:172.31.8.85"
+		- "peer1.org1.example.com:172.31.8.85"
+		- "peer0.org2.example.com:172.31.39.243"
+		- "peer1.org2.example.com:172.31.39.243"
+		- "peer1.org3.example.com:172.31.32.21"
+		- "orderer1.example.com:172.31.8.85"
+		- "orderer2.example.com:172.31.39.243"
+		- "orderer3.example.com:172.31.32.21"
         image: hyperledger/fabric-peer:amd64-1.4.4
         hostname: peer0.org3.example.com
         environment:
@@ -77,14 +77,14 @@ services:
 
     peer1_org3:
 	 extra_hosts:
-		- "peer0.org1.example.com:172.31.58.209"
-		- "peer1.org1.example.com:172.31.58.209"
-		- "peer0.org2.example.com:172.31.58.209"
-		- "peer1.org2.example.com:172.31.58.209"
-		- "peer0.org3.example.com:172.31.58.209"
-		- "orderer1.example.com:172.31.58.209"
-		- "orderer2.example.com:172.31.58.209"
-		- "orderer3.example.com:172.31.58.209"
+		- "peer0.org1.example.com:172.31.8.85"
+		- "peer1.org1.example.com:172.31.8.85"
+		- "peer0.org2.example.com:172.31.39.243"
+		- "peer1.org2.example.com:172.31.39.243"
+		- "peer0.org3.example.com:172.31.32.21"
+		- "orderer1.example.com:172.31.8.85"
+		- "orderer2.example.com:172.31.39.243"
+		- "orderer3.example.com:172.31.32.21"
         image: hyperledger/fabric-peer:amd64-1.4.4
         hostname: peer1.org3.example.com
         environment:

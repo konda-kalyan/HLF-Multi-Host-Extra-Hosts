@@ -6,9 +6,5 @@ set -ev
 
 # ORG 1
 
-docker stack deploy -c "$ORDERER1_COMPOSE_PATH" hlf_orderer
-sleep 3
-docker stack deploy -c "$SERVICE_ORG1_COMPOSE_PATH" hlf_services
-sleep 3
-docker stack deploy -c "$PEER_ORG1_COMPOSE_PATH" hlf_peer
+docker-compose -f  docker-compose-org1.yml up -d
 sleep 3

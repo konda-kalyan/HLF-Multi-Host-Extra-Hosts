@@ -3,21 +3,19 @@ version: '3.2'
 
 networks:
     hlf_multi_host_network:
-        external: 
-            name: hlf_multi_host_network
 
 services:
     cli:
-        deploy:
-            replicas: 1
-            restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 3
-            placement:
-                constraints:
-                    - node.hostname == ip-172-31-8-85
-                    - engine.labels.aws.region == us-east-2
+        extra_hosts:
+            - "peer0.org1.example.com:172.31.8.85"
+            - "peer1.org1.example.com:172.31.8.85"
+            - "peer0.org2.example.com:172.31.39.243"
+            - "peer1.org2.example.com:172.31.39.243"
+            - "peer0.org3.example.com:172.31.32.21"
+            - "peer1.org3.example.com:172.31.32.21"
+            - "orderer1.example.com:172.31.8.85"
+            - "orderer2.example.com:172.31.39.243"
+            - "orderer3.example.com:172.31.32.21"
         image: hyperledger/fabric-tools:amd64-1.4.4
         tty: true
         stdin_open: true

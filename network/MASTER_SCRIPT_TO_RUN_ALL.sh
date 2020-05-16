@@ -9,7 +9,7 @@ echo "**************************	STEP-2 IS COMPLETED 	**************************
 
 echo "**************************	STEP-3 IS COMPLETED 	*************************************"
 
-./STEP4_init_docker_swarm_and_bringup_fabric_network.sh
+./STEP4_bringup_fabric_network.sh
 
 echo "**************************	STEP-4 IS COMPLETED 	*************************************"
 

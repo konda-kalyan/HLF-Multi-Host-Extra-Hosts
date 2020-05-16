@@ -6,11 +6,11 @@ ENV_LOCATION=$PWD/.env
 echo $ENV_LOCATION
 source $ENV_LOCATION
 
-#copy artifacts to Worker nodes
-scp -r channel-artifacts crypto-config ubuntu@$ORG2_HOSTNAME:~/HLF-Multi-Host-Extra-Hosts/network
-scp -r channel-artifacts crypto-config ubuntu@$ORG3_HOSTNAME:~/HLF-Multi-Host-Extra-Hosts/network
+#copy whole 'network' directory to other nodes
+scp -r * ubuntu@$ORG2_HOSTNAME:~/HLF-Multi-Host-Extra-Hosts/network
+scp -r * ubuntu@$ORG3_HOSTNAME:~/HLF-Multi-Host-Extra-Hosts/network
 
-#On Workder nodes, copy artifacts to command dir (/var/mynetwork/)
+#On Workder nodes, copy artifacts to common dir (/var/mynetwork/)
 ssh ubuntu@$ORG2_HOSTNAME 'cd ~/HLF-Multi-Host-Extra-Hosts/network; ./copy_crypto.sh'
 ssh ubuntu@$ORG3_HOSTNAME 'cd ~/HLF-Multi-Host-Extra-Hosts/network; ./copy_crypto.sh'
 
