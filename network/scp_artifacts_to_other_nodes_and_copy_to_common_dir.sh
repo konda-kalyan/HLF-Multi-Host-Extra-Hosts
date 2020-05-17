@@ -7,6 +7,9 @@ echo $ENV_LOCATION
 source $ENV_LOCATION
 
 #copy whole 'network' directory to other nodes
+ssh ubuntu@$ORG2_HOSTNAME 'rm -rf ~/HLF-Multi-Host-Extra-Hosts/network/*'
+ssh ubuntu@$ORG3_HOSTNAME 'rm -rf ~/HLF-Multi-Host-Extra-Hosts/network/*'
+
 scp -r * ubuntu@$ORG2_HOSTNAME:~/HLF-Multi-Host-Extra-Hosts/network
 scp -r * ubuntu@$ORG3_HOSTNAME:~/HLF-Multi-Host-Extra-Hosts/network
 

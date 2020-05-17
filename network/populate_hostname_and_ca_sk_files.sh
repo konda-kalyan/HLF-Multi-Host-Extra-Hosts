@@ -31,13 +31,19 @@ sed "$FLAG" "s/fabric-couchdb.*/fabric-couchdb:$COUCHDB_IMAGE_VERSION/g" $ORG1_C
 
 # Host IP addresses replacement
 sed "$FLAG" "s/\"peer0.org1.example.com:.*\"/\"peer0.org1.example.com:$ORG1_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
+sed "$FLAG" "s/\"couchdb.peer0.org1.example.com:.*\"/\"couchdb.peer0.org1.example.com:$ORG1_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
 sed "$FLAG" "s/\"peer1.org1.example.com:.*\"/\"peer1.org1.example.com:$ORG1_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
+sed "$FLAG" "s/\"couchdb.peer1.org1.example.com:.*\"/\"couchdb.peer1.org1.example.com:$ORG1_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
 sed "$FLAG" "s/\"orderer1.example.com:.*\"/\"orderer1.example.com:$ORG1_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
 sed "$FLAG" "s/\"peer0.org2.example.com:.*\"/\"peer0.org2.example.com:$ORG2_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
+sed "$FLAG" "s/\"couchdb.peer0.org2.example.com:.*\"/\"couchdb.peer0.org2.example.com:$ORG2_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
 sed "$FLAG" "s/\"peer1.org2.example.com:.*\"/\"peer1.org2.example.com:$ORG2_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
+sed "$FLAG" "s/\"couchdb.peer1.org2.example.com:.*\"/\"couchdb.peer1.org2.example.com:$ORG2_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
 sed "$FLAG" "s/\"orderer2.example.com:.*\"/\"orderer2.example.com:$ORG2_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
 sed "$FLAG" "s/\"peer0.org3.example.com:.*\"/\"peer0.org3.example.com:$ORG3_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH 
+sed "$FLAG" "s/\"couchdb.peer0.org3.example.com:.*\"/\"couchdb.peer0.org3.example.com:$ORG3_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH 
 sed "$FLAG" "s/\"peer1.org3.example.com:.*\"/\"peer1.org3.example.com:$ORG3_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
+sed "$FLAG" "s/\"couchdb.peer1.org3.example.com:.*\"/\"couchdb.peer1.org3.example.com:$ORG3_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH 
 sed "$FLAG" "s/\"orderer3.example.com:.*\"/\"orderer3.example.com:$ORG3_HOSTNAME\"/g" $ORG1_COMPOSE_PATH $ORG2_COMPOSE_PATH $ORG3_COMPOSE_PATH
 
 
