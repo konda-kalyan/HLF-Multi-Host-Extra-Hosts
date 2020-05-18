@@ -70,7 +70,7 @@ services:
             - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
             - FABRIC_CA_SERVER_CA_NAME=ca.org2.example.com
             - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-            - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/455fe4513a2757c1b43550edad575288f96fed997521d062998033817d1860f7_sk
+            - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/c03cebdd13d2b83b299e4ac25bdb43025e511906b31ce0f4e39c5dfa41318c8b_sk
         command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
         volumes:
             - /var/mynetwork/certs/crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
@@ -81,29 +81,29 @@ services:
                  
     couchdb.peer0.org2.example.com:
         container_name: couchdb.peer0.org2.example.com
-        extra_hosts:
-            - "peer0.org2.example.com:172.31.39.243"
+        #extra_hosts:
+        #    - "peer0.org2.example.com:172.31.39.243"
         image: hyperledger/fabric-couchdb:amd64-0.4.18
-        hostname: couchdb.peer0.org2.example.com
+        #hostname: couchdb.peer0.org2.example.com
         environment:
            - COUCHDB_USER=admin
            - COUCHDB_PASSWORD=password
         ports:
-           - 7984:7984
+           - 7984:5984
         networks:
             - hlf_multi_host_network
 
     couchdb.peer1.org2.example.com:
         container_name: couchdb.peer1.org2.example.com
-        extra_hosts:
-            - "peer1.org2.example.com:172.31.39.243"
+        #extra_hosts:
+        #    - "peer1.org2.example.com:172.31.39.243"
         image: hyperledger/fabric-couchdb:amd64-0.4.18
-        hostname: couchdb.peer1.org2.example.com
+        #hostname: couchdb.peer1.org2.example.com
         environment:
            - COUCHDB_USER=admin
            - COUCHDB_PASSWORD=password
         ports:
-           - 8984:8984
+           - 8984:5984
         networks:
            - hlf_multi_host_network
 
@@ -146,7 +146,7 @@ services:
             - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org2.example.com:10051
             - CORE_PEER_LOCALMSPID=Org2MSP
             - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.org2.example.com:7984
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.org2.example.com:5984
             - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
             - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=password
             - CORE_CHAINCODE_LOGGING_LEVEL=INFO
@@ -165,7 +165,7 @@ services:
             - /var/mynetwork/certs/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls:/var/hyperledger/tls
             - /var/mynetwork/certs/crypto-config/peerOrganizations/org2.example.com/users:/var/hyperledger/users
             - /var/mynetwork/certs/channel-artifacts/:/var/hyperledger/channel-artifacts
-        command: peer node start
+        command: sh -c 'echo "Sleep 20 sec waiting CouchDB"; sleep 20; peer node start'
         working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
         depends_on:
             - couchdb.peer0.org2.example.com
@@ -215,7 +215,7 @@ services:
             - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org2.example.com:9051
             - CORE_PEER_LOCALMSPID=Org2MSP
             - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.org2.example.com:8984
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.org2.example.com:5984
             - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
             - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=password
             - CORE_CHAINCODE_LOGGING_LEVEL=INFO
@@ -232,7 +232,7 @@ services:
             - /var/mynetwork/certs/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls:/var/hyperledger/tls
             - /var/mynetwork/certs/crypto-config/peerOrganizations/org2.example.com/users:/var/hyperledger/users
             - /var/mynetwork/certs/channel-artifacts/:/var/hyperledger/channel-artifacts
-        command: peer node start
+        command: sh -c 'echo "Sleep 20 sec waiting CouchDB"; sleep 20; peer node start'
         working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
         depends_on:
             - couchdb.peer1.org2.example.com
